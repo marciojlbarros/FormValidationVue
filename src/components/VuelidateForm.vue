@@ -10,9 +10,8 @@
         shadow-md
         rounded-md
         mt-5
-        border border-gray-300
-        p-5
-        gap-2
+        border border-gray-100
+        p-8
       "
     >
       <h1 class="text-xl font-bold text-slate-900">
@@ -21,7 +20,7 @@
       <div class="flex-col text-left mt-5">
         <div class="w-full">
           <input
-            type="text" placeholder="Digite seu Primeiro Nome"
+            type="text" placeholder="Digite seu Nome"
             v-model="person.first_name"
             :class="
               v$.person.first_name.$error === true
@@ -40,17 +39,18 @@
 
         <div class="w-full">
           <input
-            type="text" placeholder="Digite seu Segundo Nome"
-            v-model="person.last_name"
+            type="text" placeholder="Digite seu Telefone"
+            v-mask="'(##)#####-####'"
+            v-model="person.phone"
             :class="
-              v$.person.last_name.$error === true
+              v$.person.phone.$error === true
                 ? 'text-fields-error'
                 : 'text-fields'
             "
           />
           <p
             class="text-red-500 text-xs font-thin"
-            v-for="error of v$.person.last_name.$errors"
+            v-for="error of v$.person.phone.$errors"
             :key="error.$uid"
           >
             {{ error.$message }}
@@ -76,7 +76,7 @@
           </p>
         </div>
 
-        <div class="flex justify-end">
+        <div class="flex justify-end mt-5">
           <button
             class="
               inline-flex
@@ -123,15 +123,20 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import { required, email, helpers } from "@vuelidate/validators";
+import { mask } from 'vue-the-mask'
 
 export default {
   name: "VuelidateForm",
+  directives: {
+    mask
+  },
+  
   data() {
     return {
       v$: useVuelidate(),
       person: {
         first_name: "",
-        last_name: "",
+        phone: "",
         email: "",
       },
     };
@@ -140,8 +145,8 @@ export default {
   validations() {
     return {
       person: {
-        first_name: { required: helpers.withMessage("Primeiro Nome é Obrigatório!", required), $autoDirty: true },
-        last_name: { required: helpers.withMessage("Segundo Nome é Obrigatório!", required), $autoDirty: true },
+        first_name: { required: helpers.withMessage("Nome é obrigatório", required), $autoDirty: true },
+        phone: { required: helpers.withMessage("Telefone é obrigatório", required), $autoDirty: true },
         email: { required: helpers.withMessage("Email obrigatório", required), email, $autoDirty: true },
       },
     };
@@ -151,7 +156,7 @@ export default {
     clearFields() {
       this.person = {
         first_name: "",
-        last_name: "",
+        phone: "",
         email: "",
       };
     },
